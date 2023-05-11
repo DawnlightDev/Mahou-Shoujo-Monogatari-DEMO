@@ -50,6 +50,7 @@ public class MON_Wolf extends Entity {
         right2 = setup("/MON_Wolf/wolfframe2", 64, 64);
         right3 = setup("/MON_Wolf/wolfframe3", 64, 64);
         right4 = setup("/MON_Wolf/wolfframe4", 64, 64);
+        portrait = setup("/MON_Wolf/WolfTrioPrototype", gp.tileSize*3, gp.tileSize*3);
 
     }
 

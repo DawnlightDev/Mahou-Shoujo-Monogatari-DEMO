@@ -21,7 +21,6 @@ public class TileManager {
 
         getTileImage();
         loadMap("/maps/samplemap.txt", 0);
-        loadMap("/maps/samplemap.txt", 1);
     }
 
     public void getTileImage() {

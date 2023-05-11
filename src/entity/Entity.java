@@ -13,6 +13,7 @@ import java.io.IOException;
 public class Entity {
     public int screenX;
     public int screenY;
+    public String[] attacks = new String[4];
     GamePanel gp;
 
     //Sprite Settings
@@ -34,6 +35,7 @@ public class Entity {
     public boolean hasDoorway = false;
     public int solidAreaDefaultX, solidAreaDefaultY;
     public boolean collisionOn = false;
+    public boolean isInteractable = false;
 
     //NPC Additional Settings
     public boolean isEnrollable = false;
@@ -60,6 +62,8 @@ public class Entity {
     public int magicPoints;
     public int maxMagicPoints;
     public Entity currentWeapon;
+    public int maxWalletSize;
+    public int currentMoneyAmount;
 
     //Item attributes
     public String description = "";
@@ -121,7 +125,7 @@ public class Entity {
         gp.cChecker.checkTile(this);
         gp.cChecker.checkPlayer(this);
         gp.cChecker.checkEntity(this, gp.mon);
-        gp.cChecker.checkEntity(this, gp.Kylie);
+        gp.cChecker.checkEntity(this, gp.npc);
 
         //IF COLLISION IS FALSE, PLAYER CAN MOVE
         if(isRoaming) {

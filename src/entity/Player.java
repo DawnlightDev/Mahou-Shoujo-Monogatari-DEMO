@@ -65,11 +65,13 @@ public class Player extends Entity {
         magicPoints = maxMagicPoints;
         attack = getAttack();
         defence = getDefence();
+        maxWalletSize = 500;
+        currentMoneyAmount = 0;
 
         currentWeapon = null;
     }
 
-    private int getAttack() {
+    public int getAttack() {
         if(currentWeapon != null) {
             return attack = (level * currentWeapon.attackValue)/2;
         }
@@ -140,7 +142,7 @@ public class Player extends Entity {
 
             //CHECK NPC COLLISION
             if(!NPC_Kylie.onPath) {
-                int npcIndex = gp.cChecker.checkEntity(this, gp.Kylie);
+                int npcIndex = gp.cChecker.checkEntity(this, gp.npc);
                 interactNPC(npcIndex);
             }
 
@@ -185,10 +187,12 @@ public class Player extends Entity {
 
                     else if(!gp.keyH.upPressed && !gp.keyH.downPressed && !gp.keyH.leftPressed && !gp.keyH.rightPressed) {
                         standCounter++;
+                        System.out.println(standCounter);
 
                         if(standCounter == 20) {
                             spriteNum = 2;
                             standCounter = 0;
+                            spriteCounter = 0;
                         }
                     }
                 }
@@ -330,7 +334,7 @@ public class Player extends Entity {
     private void interactNPC(int i) {
         if(i != 999) {
             if(gp.keyH.enterPressed) {
-                gp.Kylie[gp.currentMap][i].speak();
+                gp.npc[gp.currentMap][i].speak();
             }
         }
     }

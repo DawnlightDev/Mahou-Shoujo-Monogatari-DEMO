@@ -20,6 +20,7 @@ public class OBJ_Chest extends Entity {
         down1 = image;
         collision = true;
         opened = false;
+        isInteractable = true;
 
         solidArea = new Rectangle();
         solidArea.x = 20;

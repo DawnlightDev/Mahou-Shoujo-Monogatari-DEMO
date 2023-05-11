@@ -19,6 +19,7 @@ public class OBJ_Tree extends Entity {
         image = setup("/objects/tree", 64, 64);
         down1 = image;
         collision = true;
+        isInteractable = false;
 
         solidArea = new Rectangle();
         solidArea.x = x;

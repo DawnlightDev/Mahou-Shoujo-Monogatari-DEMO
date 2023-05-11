@@ -43,6 +43,9 @@ public class UI {
     public int commandNum = 0;
     public Entity npc;
     public Entity monster;
+    private int spriteCounter = 0;
+    private int spriteNum = 1;
+    public boolean canInteract = false;
 
     public UI(GamePanel gp) {
         this.gp = gp;
@@ -82,7 +85,7 @@ public class UI {
 
 
         if(gp.gameState == GameState.PLAY_STATE) {
-            //PLAY STATE STUFF LATER
+            drawInteractionPrompt();
         }
         if(gp.gameState == GameState.PAUSE_STATE) {
             if (gp.keyH.togglePressed) {
@@ -116,6 +119,74 @@ public class UI {
         }
     }
 
+    public void drawInteractionPrompt() {
+        BufferedImage keyboardButton = setup("/UI/buttons/EnterKey1");
+        BufferedImage keyboardButton2 = setup("/UI/buttons/EnterKey2");
+        BufferedImage keyImage = null;
+        String text = "";
+        // Calculate position based on player position
+        int x = gp.player.screenX + 75;
+        int y = gp.player.screenY + 10;
+
+        spriteCounter++;
+        //System.out.println(spriteCounter);
+        if(spriteCounter > 40) {
+            if(spriteNum == 1) {
+                spriteNum = 2;
+            }
+
+            else if(spriteNum == 2) {
+                spriteNum = 1;
+            }
+            spriteCounter = 0;
+        }
+
+
+        switch(spriteNum) {
+            case 1 -> keyImage = keyboardButton;
+            case 2 -> keyImage = keyboardButton2;
+        }
+
+        for(int i = 0; i < gp.obj.length; i++) {
+            for (int j = 0; j < gp.obj[i].length; j++) {
+                if(gp.obj[i][j] != null && gp.cChecker.checkInteraction(gp.player, gp.obj) != 999) {
+                    text = "Interact";
+
+                    // Draw icon
+                    g2.drawImage(keyImage, x, y, 32, 32,null);
+
+                    // Draw text
+                    g2.setFont(font_60);
+                    g2.setColor(Color.black);
+                    g2.drawString(text, x + 34, y + 22);
+
+                    g2.setColor(Color.white);
+                    g2.drawString(text, x + 35, y + 20);
+                }
+            }
+        }
+
+        for(int i = 0; i < gp.npc.length; i++) {
+            for(int j = 0; j < gp.npc[i].length; j++) {
+                if(gp.npc[i][j] != null && gp.cChecker.checkInteraction(gp.player, gp.npc) != 999 && !gp.npc[i][j].isRoaming) {
+                    text = "Speak";
+
+                    // Draw icon
+                    g2.drawImage(keyImage, x, y, 32, 32,null);
+
+                    // Draw text
+                    g2.setFont(font_60);
+                    g2.setColor(Color.black);
+                    g2.drawString(text, x + 34, y + 22);
+
+                    g2.setColor(Color.white);
+                    g2.drawString(text, x + 35, y + 20);
+                }
+            }
+        }
+    }
+
+
     private void drawTitleScreen() {
 
         g2.setColor(new Color(87, 0, 49));
@@ -145,7 +216,7 @@ public class UI {
         }
 
         g2.setFont(g2.getFont().deriveFont(Font.PLAIN, 36f));
-        g2.drawString("Demo Version 1.0", x+(int)(gp.tileSize*0.5), y-(int)(gp.tileSize*0.5));
+        g2.drawString("Demo Version B", x+(int)(gp.tileSize*0.5), y-(int)(gp.tileSize*0.5));
 
         //MENU
         g2.setFont(g2.getFont().deriveFont(Font.BOLD, 36f));
@@ -181,7 +252,7 @@ public class UI {
         final int frameX = (int)(gp.tileSize*1.5);
         final int frameY = gp.tileSize * 5;
         final int frameWidth = gp.tileSize * 3;
-        final int frameHeight = gp.tileSize * 4;
+        final int frameHeight = gp.tileSize * 5;
         drawSubWindow(frameX, frameY, frameWidth, frameHeight);
 
         //TEXT
@@ -200,6 +271,8 @@ public class UI {
         g2.drawString("HP", textX, textY);
         textY += lineHeight;
         g2.drawString("MP", textX, textY);
+        textY += lineHeight;
+        g2.drawString("Money", textX, textY);
         textY += gp.tileSize;
         g2.drawString("Weapon", textX, textY);
 
@@ -226,6 +299,11 @@ public class UI {
 
         value = String.valueOf(gp.player.magicPoints + "/" + gp.player.maxMagicPoints);
         textX = getXForAlignRightText(value, tailX);
+        g2.drawString(value, textX, textY);
+        textY += lineHeight;
+
+        value = String.valueOf(gp.player.currentMoneyAmount);
+        textX = getXForAlignRightText(value, textX);
         g2.drawString(value, textX, textY);
         textY += lineHeight;
 
@@ -835,7 +913,7 @@ public class UI {
         backgrounds = setup("/UI/backgrounds/ForestBackgroundPrototype");
         g2.drawImage(backgrounds, 0, 0, gp.screenWidth, gp.screenHeight, null);
         g2.drawImage(gp.player.down2, gp.tileSize * 2, (int) (gp.screenHeight - gp.tileSize*4), gp.tileSize * 3, gp.tileSize * 3, null);
-        g2.drawImage(monster.down1, gp.screenWidth - gp.tileSize*3, (int) (gp.screenHeight - gp.tileSize*4), gp.tileSize*3, gp.tileSize*3, null);
+        g2.drawImage(monster.portrait, gp.screenWidth - gp.tileSize*4, (int) (gp.screenHeight - gp.tileSize*4), gp.tileSize*3, gp.tileSize*3, null);
         drawDialogueScreen();
 
         if(subState != 2) {
@@ -868,8 +946,13 @@ public class UI {
                 subState = 1;
                 System.out.println("Dialogue Set: " + dialogueSet + " Dialogue Index: " + dialogueIndex);
             }
+
             drawActionsMenu();
             gp.keyH.enterPressed = false;
+        }
+
+        if(subState == 2 && selectingAction)  {
+            drawAttackOptions(gp.player.currentWeapon.attacks);
         }
 
     }
@@ -925,12 +1008,16 @@ public class UI {
 
 
     public void runFromMonster() {
-        gp.gameState = GameState.PLAY_STATE;
-        selectingAction = false;
-        dialogueSet = 0;
-        dialogueIndex = 0;
-        subState = 0;
-        System.out.println("Dialogue reset to \n Dialogue Set: " + dialogueSet + " Dialogue Index: " + dialogueIndex);
+        gp.keyH.enterPressed = false;
+
+        if(gp.keyH.enterPressed) {
+            gp.gameState = GameState.PLAY_STATE;
+            dialogueIndex = 0;
+            currentDialogue = "";
+            subState = 0;
+            System.out.println("Dialogue reset to \n Dialogue Set: " + dialogueSet + " Dialogue Index: " + dialogueIndex);
+            dialogueSet = 0;
+        }
     }
 
     public void useItem() {
@@ -942,13 +1029,18 @@ public class UI {
             currentDialogue = "You can't attack without a weapon!";
             if (gp.keyH.enterPressed) {
                 System.out.println("Enter key pressed!");
-                selectingAction = false;
+                subState = 1;
+                selectingAction = true;
+                gp.keyH.enterPressed = false;
             }
-        } else {
+        }
+        else {
             switch(gp.player.currentWeapon.name) {
-                case "Magic Book" -> {
+                case "Magician's Book" -> {
                     currentDialogue = "What spell will you use?";
                     selectingAction = true;
+                    System.out.println("Action selection enabled!");
+                    gp.keyH.enterPressed = false;
                 }
             }
         }
@@ -968,13 +1060,58 @@ public class UI {
 
             //DELAY FOR DRAWING CHARACTERS
             try {
-                Thread.sleep(50); // add a delay of 100 milliseconds
+                Thread.sleep(50); // add a delay of 50 milliseconds
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
         }
         System.out.println(currentDialogue);
     }
+
+    public void drawAttackOptions(String[] attackNames) {
+        gp.keyH.enterPressed = false;
+        if(subState == 2 && selectingAction) {
+            //Draw the attack options window
+            int frameX = gp.screenWidth - gp.tileSize*8;
+            int frameY = gp.tileSize*8;
+            int frameWidth = gp.tileSize*5;
+            int frameHeight = (int) (gp.tileSize*2.5);
+
+            drawSubWindow(frameX, frameY, frameWidth, frameHeight);
+
+            int textX = frameX+15;
+            int textY = frameY+45;
+
+            if (attackNames != null) {
+                for (int i = 0; i < attackNames.length; i++) {
+                    String attackName = attackNames[i];
+                    if (i == commandNum) { // highlight text and allow selection
+                        g2.setColor(Color.yellow);
+                        if (gp.keyH.enterPressed) {
+                            subState = 3;
+                            calculateDamage();
+                            gp.keyH.enterPressed = false;
+                        }
+                    }
+
+                    else {
+                        g2.setColor(Color.white);
+                    }
+
+                    g2.drawString(attackName, textX, textY);
+                    textY += gp.tileSize * 0.5;
+                }
+            }
+        }
+    }
+
+    public void calculateDamage() {
+        if(subState == 3) {
+            currentDialogue = monster.name + " took " + gp.player.getAttack() + " damage!";
+        }
+    }
+
+
 
 
     public void drawSubWindow(int x, int y, int width, int height) {

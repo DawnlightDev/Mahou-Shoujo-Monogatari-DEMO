@@ -3,6 +3,7 @@ package main;
 import entity.NPC_Kylie;
 import monster.MON_Wolf;
 import object.*;
+import tiles_interactive.AnimatedWater;
 
 public class AssetSetter {
     GamePanel gp;
@@ -42,14 +43,28 @@ public class AssetSetter {
     }
 
     public void setNPC() {
-        gp.Kylie[0][0] = new NPC_Kylie(gp);
-        gp.Kylie[0][0].worldX = gp.tileSize * 21;
-        gp.Kylie[0][0].worldY = gp.tileSize * 13;
+        gp.npc[0][0] = new NPC_Kylie(gp);
+        gp.npc[0][0].worldX = gp.tileSize * 21;
+        gp.npc[0][0].worldY = gp.tileSize * 13;
     }
 
     public void setMonster() {
         gp.mon[0][0] = new MON_Wolf(gp);
         gp.mon[0][0].worldX = gp.tileSize*27;
         gp.mon[0][0].worldY = gp.tileSize*13;
+    }
+
+    public void setInteractiveTile() {
+        for(int i = 0; i < 50; i++) {
+            if(i != 14) {
+                gp.iTile[0][i] = new AnimatedWater(gp, 23, i);
+            }
+
+        }
+
+
+
+
+
     }
 }

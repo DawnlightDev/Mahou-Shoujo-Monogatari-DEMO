@@ -56,7 +56,7 @@ public class GamePanel extends JPanel implements Runnable {
 
     //ENTITIES AND OBJECTS
     public Player player = new Player(this, keyH);
-    public Entity[][] Kylie = new Entity[10][10];
+    public Entity[][] npc = new Entity[10][10];
     public Entity[][] obj = new Entity[10][50];
     public Entity[][] mon = new Entity[10][10];
     public InteractiveTile[][] iTile = new InteractiveTile[maxMap][50];
@@ -92,6 +92,7 @@ public class GamePanel extends JPanel implements Runnable {
         aSetter.setNPC();
         aSetter.setObject();
         aSetter.setMonster();
+        aSetter.setInteractiveTile();
 
         eManager.setup();
 
@@ -142,9 +143,9 @@ public class GamePanel extends JPanel implements Runnable {
             player.update();
 
             //NPC
-            for (int i = 0; i < Kylie.length; i++) {
-                if (Kylie[currentMap][i] != null) {
-                    Kylie[currentMap][i].update();
+            for (int i = 0; i < npc.length; i++) {
+                if (npc[currentMap][i] != null) {
+                    npc[currentMap][i].update();
                 }
             }
 
@@ -157,6 +158,13 @@ public class GamePanel extends JPanel implements Runnable {
 
             //ENVIRONMENT
             eManager.update();
+
+            //INTERACTIVE TILES
+            for(int i = 0; i < iTile[currentMap].length; i++) {
+                if(iTile[currentMap][i] != null) {
+                    iTile[currentMap][i].update();
+                }
+            }
         }
         if (gameState == GameState.PAUSE_STATE) {
 
@@ -168,13 +176,15 @@ public class GamePanel extends JPanel implements Runnable {
         //TITLE SCREEN
         if (gameState == GameState.TITLE_STATE) {
             ui.draw(g2);
-        } else {
+        }
+
+        else {
             tileM.draw(g2);
 
             //ENTITIES
-            for (int i = 0; i < Kylie.length; i++) {
-                if (Kylie[i] != null) {
-                    entityList.add(Kylie[currentMap][i]);
+            for (int i = 0; i < npc.length; i++) {
+                if (npc[i] != null) {
+                    entityList.add(npc[currentMap][i]);
                 }
             }
 
@@ -188,6 +198,14 @@ public class GamePanel extends JPanel implements Runnable {
             for (int i = 0; i < mon.length; i++) {
                 if (mon[i] != null) {
                     entityList.add(mon[currentMap][i]);
+                }
+            }
+
+            //INTERACTIVE TILES
+            for(int i = 0; i < iTile[currentMap].length; i++) {
+                if(iTile[currentMap][i] != null) {
+                    //System.out.println(iTile[currentMap].length);
+                    entityList.add(iTile[currentMap][i]);
                 }
             }
 

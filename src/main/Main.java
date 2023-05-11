@@ -8,7 +8,7 @@ public class Main {
         window = new JFrame();
         window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         window.setResizable(true);
-        window.setTitle("Mahou Shoujo Monogatari - Demo");
+        window.setTitle("Mahou Shoujo Monogatari - Demo Version B");
         window.setUndecorated(true);
         window.setExtendedState(JFrame.MAXIMIZED_BOTH);
         ImageIcon img = new ImageIcon("src/Prototype Sprites/FINALMAYBE.png");
@@ -21,8 +21,10 @@ public class Main {
 
         window.setLocationRelativeTo(null);
         window.setVisible(true);
-
         gamePanel.setupGame();
+
+
+        
         gamePanel.startGameThread();
     }
 }

@@ -13,6 +13,7 @@ public class NPC_Kylie extends Entity {
         speed = 4;
         isEnrollable = true;
         isRoaming = false;
+        isInteractable = true;
         onPath = false;
         spriteNum = 2;
 
@@ -91,7 +92,7 @@ public class NPC_Kylie extends Entity {
         gp.ui.npc = this;
         facePlayer();
         startDialogue(this, dialogueSet);
-        gp.player.addToParty(gp.Kylie);
+        gp.player.addToParty(gp.npc);
         onPath = true;
         isRoaming = true;
 

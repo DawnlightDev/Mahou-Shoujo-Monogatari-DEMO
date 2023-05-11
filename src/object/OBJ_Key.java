@@ -13,6 +13,7 @@ public class OBJ_Key extends Entity {
         UIimg = setup("/objects/key", 32, 32);
         down1 = image;
         description = "A " + name + ". It seems to unlock \nsomething...";
+        isInteractable = false;
 
         solidArea = new Rectangle();
         solidArea.x = 20;

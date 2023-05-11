@@ -302,7 +302,6 @@ public class KeyHandler implements KeyListener {
             if(enterPressed && gp.ui.selectingAction) {
                 switch(gp.ui.commandNum) {
                     case 0 -> {
-                        System.out.println("Enter key pressed for " + gp.ui.commandNum);
                         gp.ui.subState = 2;
                         gp.ui.selectingAction = false;
                         gp.ui.attackState();
@@ -313,15 +312,48 @@ public class KeyHandler implements KeyListener {
                     }
 
                     case 2 -> {
+                        enterPressed = false;
                         gp.ui.selectingAction = false;
-                        gp.ui.runFromMonster();
+                        gp.ui.currentDialogue = "Got away from " + gp.ui.monster.name + "!";
+
+                        if(enterPressed) {
+                            System.out.print(enterPressed);
+                            gp.ui.runFromMonster();
+                            enterPressed = false;
+                        }
                     }
                 }
             }
+
             if(enterPressed && !gp.ui.selectingAction) {
                 switch(gp.ui.subState) {
                     case 2 -> {
                         gp.ui.subState = 1;
+                    }
+
+                }
+            }
+
+            if(enterPressed && gp.ui.selectingAction && gp.ui.subState == 2) {
+                switch(gp.ui.commandNum) {
+                    case 0 -> {
+                        gp.ui.currentDialogue = "Jeanne casts " + gp.player.currentWeapon.attacks[0] + "!";
+                        enterPressed = false;
+                        if(enterPressed) {
+                            gp.ui.currentDialogue = gp.ui.monster.name + " took " + gp.player.getAttack() + " damage!";
+                        }
+                    }
+
+                    case 1 -> {
+                        gp.ui.currentDialogue = "Jeanne casts " + gp.player.currentWeapon.attacks[1] + "!";
+                    }
+
+                    case 2 -> {
+                        gp.ui.currentDialogue = "Jeanne casts " + gp.player.currentWeapon.attacks[2] + "!";
+                    }
+
+                    case 3-> {
+                        gp.ui.currentDialogue = "Jeanne casts " + gp.player.currentWeapon.attacks[3] + "!";
                     }
                 }
             }
@@ -330,6 +362,7 @@ public class KeyHandler implements KeyListener {
         int maxCommandNum = 0;
         switch(gp.ui.subState) {
             case 1 -> maxCommandNum = 2;
+            case 2 -> maxCommandNum = 3;
         }
 
         if(code == KeyEvent.VK_W || code == KeyEvent.VK_UP) {
